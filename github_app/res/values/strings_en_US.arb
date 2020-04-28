@@ -1,0 +1,18 @@
+{
+  "app_title":"app_name",
+  "app_test": "app_test",
+  "app_login": "App Login",
+  "app_theme": "AppThemeColor",
+  "app_language": "AppLanguage",
+  "app_auto": "System",
+  "userNameOrEmail": "UserNameOrEmail",
+  "userName": "UserName",
+  "password": "Password",
+  "userNameRequired": "UserNameRequired",
+  "passwordRequired": "PasswordRequired",
+  "userNameOrPasswordWrong": "UserNameOrPasswordWrong",
+  "AppLogOut": "AppLogOut",
+  "AppHasLogOut": "AppHasLogOut",
+  "Confirm": "Confirm",
+  "Cancel": "Cancel"
+}

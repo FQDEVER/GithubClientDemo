@@ -1,0 +1,18 @@
+{
+  "app_title":"App标题",
+  "app_test": "App测试",
+  "app_login": "App登录",
+  "app_theme": "主题颜色",
+  "app_language": "app语言",
+  "app_auto": "跟随系统",
+  "userNameOrEmail": "用户名或邮箱",
+  "userName": "用户名",
+  "password": "密码",
+  "userNameRequired": "用户名不能为空",
+  "passwordRequired": "密码不能为空",
+  "userNameOrPasswordWrong": "用户名或密码错误",
+  "AppLogOut": "退出登录",
+  "AppHasLogOut": "是否确定退出登录",
+  "Confirm": "确定",
+  "Cancel": "取消"
+}
