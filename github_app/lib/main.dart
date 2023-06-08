@@ -1,32 +1,25 @@
-import 'package:flutter/cupertino.dart';
+import 'package:dfflutterdemo/NavigationManager.dart';
+import 'package:dfflutterdemo/Pages/Mines/LanguageRoute.dart';
+import 'package:dfflutterdemo/Pages/Mines/LoginCita.dart';
+import 'package:dfflutterdemo/Pages/Mines/ThemeChangeRoute.dart';
+import 'package:dfflutterdemo/common/Global.dart';
+import 'package:dfflutterdemo/l10n/localization_intl.dart';
+import 'package:dfflutterdemo/models/LocaleModel.dart';
+import 'package:dfflutterdemo/models/ThemeModel.dart';
+import 'package:dfflutterdemo/models/UserModel.dart';
 import 'package:flutter/material.dart';
-import 'package:github_app/common/Global.dart';
-import 'package:github_app/common/Git.dart';
-import 'package:github_app/models/LocaleModel.dart';
-import 'package:github_app/models/UserModel.dart';
-import 'package:github_app/models/repo.dart';
-import 'package:github_app/models/ThemeModel.dart';
-import 'package:github_app/routes/LanguageRoute.dart';
-import 'package:github_app/routes/ThemeChangeRoute.dart';
-import 'generated/i18n.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:provider/provider.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:github_app/routes/LoginRoute.dart';
-import 'package:github_app/widgets/gmAvatar.dart';
-import 'package:flukit/flukit.dart';
-import 'package:github_app/widgets/RepoItem.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-
-void main(){
-  final userModel = UserModel();
-  WidgetsFlutterBinding.ensureInitialized();
-  Global.init().then((value) => runApp(
-    MyApp(),
-  ));
-}
+//Global.init().then((value) =>
+void main() => Global.init().then((value) {
+      return runApp(const MyApp());
+    });
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -36,246 +29,142 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LocaleModel()),
         ChangeNotifierProvider(create: (_) => ThemeModel()),
       ],
-      child: Consumer2<ThemeModel,LocaleModel>(
-        builder: (BuildContext context,themeModel,localeModel,Widget child){
-          return OKToast(
+      child: Consumer2<ThemeModel, LocaleModel>(
+          builder: (BuildContext context, themeModel, localeModel, child) {
+        return OKToast(
             child: MaterialApp(
-              theme: ThemeData(
-                primarySwatch: themeModel.theme,
-                visualDensity: VisualDensity.adaptivePlatformDensity,
-              ),
-              onGenerateTitle: (context){
-                return S.of(context).app_title;
-              },
-              home: HomeRoute(),
-              locale: localeModel.getLocale(),
-              supportedLocales: S.delegate.supportedLocales,
-              localizationsDelegates: const [
-                S.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-              ],
-              localeListResolutionCallback: (List<Locale> locales,Iterable<Locale> supportedLocales){
-                if(localeModel.getLocale() != null){
-                  //如果已选定语言,则不跟随系统
-                  return localeModel.getLocale();
-                } else{
-                  Locale locale;
-                  Locale _locale = locales.first;
-                  if(supportedLocales.contains(_locale)){
-                    locale = _locale;
-                  }else{
-                    locale = Locale("en","US");
-                  }
-                  return locale;
-                }
-              },
-              routes: <String,WidgetBuilder>{
-                "login": (context) => LoginRoute(),
-                "themes": (context) => ThemeChangeRoute(),
-                "language": (context) => LanguageRoute(),
-              },
-
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-
-
-class HomeRoute extends StatefulWidget {
-
-  @override
-  _HomeRouteState createState() => _HomeRouteState();
-}
-
-class _HomeRouteState extends State<HomeRoute> {
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar:AppBar(
-        title: Text(S.of(context).app_title),
-      ),
-      body: _buildBody(context),
-      drawer: MyDrawer(), //抽屉菜单
-    );
-  }
-}
-
-//构建主页内容
-Widget _buildBody(BuildContext context){
-  UserModel userModel = Provider.of<UserModel>(context);
-
-  if(!userModel.isLogin){
-    return Center(
-      child: RaisedButton(onPressed:(){
-        Navigator.of(context).pushNamed("login");
-      },
-        child: Text(S.of(context).app_login),
-      ),
-    );
-  }else{
-    //已经登录.根据userId获取根据数据
-//已登录，则展示项目列表
-    return InfiniteListView<Repo>(
-      onRetrieveData: (int page, List<Repo> items, bool refresh) async {
-        var data = await Git(context).getRepos(
-          refresh: refresh,
-          queryParameters: {
-            'page': page,
-            'page_size': 20,
-          },
-        );
-        //把请求到的新数据添加到items中
-        items.addAll(data);
-        // 如果接口返回的数量等于'page_size'，则认为还有数据，反之则认为最后一页
-        return data.length==20;
-      },
-      itemBuilder: (List list, int index, BuildContext ctx) {
-        // 项目信息列表项
-        return RepoItem(repo: list[index],);
-      },
-    );
-  }
-}
-
-//ListView<Repo>(
-//onRetrieveData: (int page, List<Repo> items, bool refresh) async {
-//var data = await Git(context).getRepos(
-//refresh: refresh,
-//queryParameters: {
-//'page': page,
-//'page_size': 20,
-//},
-//);
-////把请求到的新数据添加到items中
-//items.addAll(data);
-//// 如果接口返回的数量等于'page_size'，则认为还有数据，反之则认为最后一页
-//return data.length==20;
-//},
-//itemBuilder: (List list, int index, BuildContext ctx) {
-//// 项目信息列表项
-//return RepoItem(list[index]);
-//},
-//);
-
-
-class MyDrawer extends StatelessWidget {
-  const MyDrawer({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      //移除顶部padding
-      child: MediaQuery.removePadding(
-        context: context,
-        removeTop: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildHeader(), //构建抽屉菜单头部
-            Expanded(child: _buildMenus()), //构建功能菜单
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Consumer<UserModel>(
-      builder: (BuildContext context,UserModel value,Widget child) {
-        return GestureDetector(
-          child: Container(
-            color: Theme.of(context).primaryColor,
-            padding: EdgeInsets.only(top: 40, bottom: 20),
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ClipOval(
-                    // 如果已登录，则显示用户头像；若未登录，则显示默认头像
-                    child:value.isLogin ? gmAvatar(value.user.avatar_url, width: 80) : Image.asset(
-                      "imgs/avatar-default.png",
-                      width: 80,
-                    ),
-                  ),
-                ),
-                Text(
-                  value.isLogin
-                      ? value.user.login
-                      : S.of(context).app_login,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                )
-              ],
-            ),
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: themeModel.theme,
           ),
-          onTap: () {
-            if (!value.isLogin) Navigator.of(context).pushNamed("login");
+          onGenerateTitle: (context) {
+            return GmLocalizations.of(context)!.title;
           },
-        );
-      },
-    );
-  }
-
-  // 构建菜单项
-  Widget _buildMenus() {
-    return Consumer<UserModel>(
-      builder: (BuildContext context, UserModel userModel, Widget child) {
-        var gm = S.of(context);
-        return ListView(
-          children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.color_lens),
-              title: Text(gm.app_theme),
-              onTap: () => Navigator.pushNamed(context, "themes"),
-            ),
-            ListTile(
-              leading: const Icon(Icons.language),
-              title: Text(gm.app_language),
-              onTap: () => Navigator.pushNamed(context, "language"),
-            ),
-            if(userModel.isLogin) ListTile(
-              leading: const Icon(Icons.power_settings_new),
-              title: Text(gm.AppLogOut),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) {
-                    //退出账号前先弹二次确认窗
-                    return AlertDialog(
-                      content: Text(gm.AppHasLogOut),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text(gm.Cancel),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        FlatButton(
-                          child: Text(gm.Confirm),
-                          onPressed: () {
-                            //该赋值语句会触发MaterialApp rebuild
-                            userModel.user = null;
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
+          home: const TabNavigator(),
+          locale: localeModel.getLocale(),
+          supportedLocales: const [
+            Locale('en', 'US'),
+            Locale('zh', 'CN'),
+            //添加其他
           ],
-        );
-      },
+          localizationsDelegates: const [
+            // 本地化的代理类
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GmLocalizationsDelegate()
+          ],
+          localeResolutionCallback: (_locale, supportedLocales) {
+            if (localeModel.getLocale() != null) {
+              //如果已经选择了语言.就不跟随系统
+              return localeModel.getLocale();
+            } else {
+              //跟随系统
+              Locale locale;
+              if (supportedLocales.contains(_locale)) {
+                locale = _locale!;
+              } else {
+                //如果系统语言不是中文或者英文.则默认使用英文
+                locale = const Locale('en', 'US');
+              }
+              return locale;
+            }
+          },
+          //注册路由表
+          routes: <String, WidgetBuilder>{
+            'login': (context) => const LoginCita(),
+            'themes': (context) => const ThemeChangeRoute(),
+            'language': (context) => const LanguageRoute(),
+          },
+        ));
+      }),
     );
   }
 }
+
+// class MyHomePage extends StatefulWidget {
+//   const MyHomePage({super.key, required this.title});
+
+//   // This widget is the home page of your application. It is stateful, meaning
+//   // that it has a State object (defined below) that contains fields that affect
+//   // how it looks.
+
+//   // This class is the configuration for the state. It holds the values (in this
+//   // case the title) provided by the parent (in this case the App widget) and
+//   // used by the build method of the State. Fields in a Widget subclass are
+//   // always marked "final".
+
+//   final String title;
+
+//   @override
+//   State<MyHomePage> createState() => _MyHomePageState();
+// }
+
+// class _MyHomePageState extends State<MyHomePage> {
+//   int _counter = 0;
+
+//   void _incrementCounter() {
+//     setState(() {
+//       // This call to setState tells the Flutter framework that something has
+//       // changed in this State, which causes it to rerun the build method below
+//       // so that the display can reflect the updated values. If we changed
+//       // _counter without calling setState(), then the build method would not be
+//       // called again, and so nothing would appear to happen.
+//       _counter++;
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // This method is rerun every time setState is called, for instance as done
+//     // by the _incrementCounter method above.
+//     //
+//     // The Flutter framework has been optimized to make rerunning build methods
+//     // fast, so that you can just rebuild anything that needs updating rather
+//     // than having to individually change instances of widgets.
+//     return Scaffold(
+//       appBar: AppBar(
+//         // TRY THIS: Try changing the color here to a specific color (to
+//         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+//         // change color while the other colors stay the same.
+//         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+//         // Here we take the value from the MyHomePage object that was created by
+//         // the App.build method, and use it to set our appbar title.
+//         title: Text(widget.title),
+//       ),
+//       body: Center(
+//         // Center is a layout widget. It takes a single child and positions it
+//         // in the middle of the parent.
+//         child: Column(
+//           // Column is also a layout widget. It takes a list of children and
+//           // arranges them vertically. By default, it sizes itself to fit its
+//           // children horizontally, and tries to be as tall as its parent.
+//           //
+//           // Column has various properties to control how it sizes itself and
+//           // how it positions its children. Here we use mainAxisAlignment to
+//           // center the children vertically; the main axis here is the vertical
+//           // axis because Columns are vertical (the cross axis would be
+//           // horizontal).
+//           //
+//           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
+//           // action in the IDE, or press "p" in the console), to see the
+//           // wireframe for each widget.
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             const Text(
+//               'You have pushed the button this many times:',
+//             ),
+//             Text(
+//               '$_counter',
+//               style: Theme.of(context).textTheme.headlineMedium,
+//             ),
+//           ],
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: _incrementCounter,
+//         tooltip: 'Increment',
+//         child: const Icon(Icons.add),
+//       ), // This trailing comma makes auto-formatting nicer for build methods.
+//     );
+//   }
+// }

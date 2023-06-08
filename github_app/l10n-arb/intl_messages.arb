@@ -1,0 +1,100 @@
+{
+  "@@last_modified": "2023-06-08T11:42:24.217316",
+  "title": "Flutter APP",
+  "@title": {
+    "description": "Title for the Demo application",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "remainingEmailsMessage": "{howMany,plural, =0{There are no emails left}=1{There is {howMany} email left}other{There are {howMany} emails left}}",
+  "@remainingEmailsMessage": {
+    "description": "How many emails remain after archiving.",
+    "type": "text",
+    "placeholders_order": [
+      "howMany"
+    ],
+    "placeholders": {
+      "howMany": {
+        "example": 42
+      }
+    }
+  },
+  "titleMsg": "test content",
+  "@titleMsg": {
+    "description": "test content for the Demo application",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "mineTitle": "Mine",
+  "@mineTitle": {
+    "description": "我的标题",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "loginTitle": "Login",
+  "@loginTitle": {
+    "description": "登录按钮提示语",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "noDescription": "noDescription",
+  "@noDescription": {
+    "description": "--",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "themeColor": "ThemeColor",
+  "@themeColor": {
+    "description": "changeThemeColor",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "language": "Language",
+  "@language": {
+    "description": "语言",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "登出",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "logoutTip": "Logout Confirm?",
+  "@logoutTip": {
+    "description": "确定登出",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "取消",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "auto": "Auto",
+  "@auto": {
+    "description": "跟随系统",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  },
+  "userNameOrPasswordWrong": "UserName Or Password Wrong!",
+  "@userNameOrPasswordWrong": {
+    "description": "账号或密码错误",
+    "type": "text",
+    "placeholders_order": [],
+    "placeholders": {}
+  }
+}

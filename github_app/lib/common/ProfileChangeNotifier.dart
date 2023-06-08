@@ -1,18 +1,13 @@
+import 'package:dfflutterdemo/common/Global.dart';
+import 'package:dfflutterdemo/models/index.dart';
+import 'package:flutter/foundation.dart';
 
-import 'package:flutter/cupertino.dart';
-import 'package:github_app/common/Global.dart';
-import 'package:github_app/models/index.dart';
-
-
-class ProfileChangeNotifier extends ChangeNotifier{
-  //不能加_.这个代表私有的.子类使用不了
-  Profile get profile => Global.profile;
+class ProfileChangeNotifier extends ChangeNotifier {
+  Profile get _profile => Global.profile;
 
   @override
-  void notifyListeners(){
-    //保存Profile变更
-    Global.saveProfile();
-    //通知依赖的Widget更新
-    super.notifyListeners();
+  void notifyListeners() {
+    Global.saveProfile(); //保存Profile变更
+    super.notifyListeners(); //通知依赖的Widget更新
   }
 }
